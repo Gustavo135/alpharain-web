@@ -1,9 +1,9 @@
 name: Re-entrenamiento diario del modelo
 
 on:
-  workflow_dispatch: # Permite ejecutarlo manualmente desde la pestaña Actions
+  workflow_dispatch:
   schedule:
-    - cron: '0 5 * * *' # Se ejecuta todos los días a las 5:00 AM UTC
+    - cron: '0 5 * * *'
 
 jobs:
   retrain-and-update:
@@ -11,26 +11,20 @@ jobs:
     steps:
       - name: Checkout del repositorio
         uses: actions/checkout@v3
-
       - name: Configurar Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
-
       - name: Instalar dependencias
         run: pip install tensorflow firebase-admin numpy
-
       - name: Crear clave de servicio desde el secreto
         run: echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" > serviceAccountKey.json
-
       - name: Ejecutar script de re-entrenamiento
         run: python retrain.py
-
       - name: Subir los nuevos pesos al repositorio
         run: |
           git config --global user.name 'GitHub Actions Bot'
           git config --global user.email 'actions@github.com'
           git add public/weights.json
-          # Solo hace commit si hay cambios en el archivo
           git diff --staged --quiet || git commit -m "Actualización automática de pesos del modelo"
           git push
