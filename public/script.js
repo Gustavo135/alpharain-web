@@ -40,7 +40,10 @@ async function main() {
     model.add(tf.layers.dense({units: 8, activation: 'relu'}));
     model.add(tf.layers.dense({units: 1}));
     
-    // Carga los pesos pre-entrenados al modelo
+    // Carga los pesos desde el archivo JSON en GitHub
+    const weightsURL = 'https://raw.githubusercontent.com/Gustavo135/alpharain-web/main/public/weights.json';
+    const response = await fetch(weightsURL);
+    const modelWeights = await response.json();
     const weightTensors = modelWeights.map(w => tf.tensor(w));
     model.setWeights(weightTensors);
 
