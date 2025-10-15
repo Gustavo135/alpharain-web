@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estación AlphaRain</title>
+    <!-- Estilos para la apariencia de la página -->
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #eaf6fb; /* Fondo azul claro */
+            color: #222c36;      /* Texto oscuro */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .station {
+            background: #ffffff; /* Fondo de tarjetas */
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 0 24px rgba(62, 230, 214, 0.15);
+            text-align: center;
+            border: 2px solid #b7c9d6;
+            position: relative;
+            overflow: hidden;
+        }
+        .station::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: url('alpharain-wolf.jpg') no-repeat center center;
+            background-size: cover;
+            opacity: 0.25; /* Ajusta la visibilidad de la imagen */
+            filter: blur(8px);
+            z-index: 0;
+        }
+        .station.day::before {
+            background: url('alpharain-wolf-sol.jpg') no-repeat center center;
+            background-size: cover;
+            opacity: 0.40;
+            filter: blur(4px);
+            z-index: 0;
+            content: "";
+            position: absolute;
+            inset: 0;
+        }
+        .station.night::before {
+            background: url('alpharain-wolf.jpg') no-repeat center center;
+            background-size: cover;
+            opacity: 0.40;
+            filter: blur(4px);
+            z-index: 0;
+            content: "";
+            position: absolute;
+            inset: 0;
+        }
+        .station > * {
+            position: relative;
+            z-index: 1;
+        }
+        h1 {
+            color: #ff4e8a; /* Rosa principal */
+            margin-top: 0;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        .data-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .metric {
+            background: #eaf6fb; /* Fondo azul claro */
+            padding: 20px;
+            border-radius: 12px;
+            border: 1.5px solid #b7c9d6;
+        }
+        .metric h2 {
+            margin: 0 0 10px;
+            font-size: 1.2em;
+            color: #3ee6d6; /* Turquesa */
+            font-weight: 600;
+        }
+        .metric p {
+            margin: 0;
+            font-size: 2em;
+            font-weight: bold;
+            color: #222c36;
+        }
+        .label {
+            display: block;
+            margin-top: 6px;
+            font-size: 1em;
+            font-weight: 500;
+            color: #3ee6d6;
+        }
+        .metric.night .label {
+            color: #ff4e8a;
+        }
+        .prediction {
+            background: #ff4e8a; /* Rosa principal */
+            color: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 30px;
+            grid-column: 1 / -1;
+            font-weight: bold;
+            border: 1.5px solid #b7c9d6;
+        }
+        #status {
+            font-style: italic;
+            color: #3ee6d6; /* Turquesa */
+            height: 20px;
+            margin-bottom: 10px;
+        }
+        #timestamp {
+            font-size: 0.8em;
+            color: #b7c9d6; /* Gris claro */
+            margin-top: 20px;
+        }
+
+        /* Switch estilo iOS */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+        .switch input { display: none; }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ff4e8a;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px; width: 26px;
+            left: 4px; bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #3ee6d6;
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Día (por defecto) */
+        body.day {
+            background: #eaf6fb;
+            color: #222c36;
+        }
+        .station.day {
+            background: #ffffff;
+            border-color: #b7c9d6;
+        }
+        .metric.day {
+            background: #eaf6fb;
+            border-color: #b7c9d6;
+        }
+        .metric.day h2 { color: #3ee6d6; }
+        .prediction.day {
+            background: #ff4e8a;
+            color: #fff;
+            border-color: #b7c9d6;
+        }
+        #status.day { color: #3ee6d6; }
+        #timestamp.day { color: #b7c9d6; }
+
+        /* Noche */
+        body.night {
+            background: #222c36;
+            color: #eaf6fb;
+        }
+        .station.night {
+            background: #2a2f3a;
+            border-color: #3ee6d6;
+        }
+        .metric.night {
+            background: #222c36;
+            border-color: #3ee6d6;
+        }
+        .metric.night h2 { color: #ff4e8a; }
+        .metric.night p {
+            color: #eaf6fb; /* Azul claro, buen contraste en modo noche */
+        }
+        .prediction.night {
+            background: #3ee6d6;
+            color: #222c36;
+            border-color: #ff4e8a;
+        }
+        #status.night { color: #ff4e8a; }
+        #timestamp.night { color: #3ee6d6; }
+    </style>
+</head>
+<body>
+    <!-- Switch para modo día/noche -->
+    <div style="position: absolute; top: 30px; right: 30px;">
+        <label class="switch">
+            <input type="checkbox" id="mode-toggle">
+            <span class="slider"></span>
+        </label>
+    </div>
+    <!-- Contenedor principal de la estación -->
+    <div class="station">
+        <h1>Estación AlphaRain </h1>
+        <!-- Estado del modelo de IA -->
+        <p id="status">Cargando modelo de IA...</p>
+
+        <!-- Grid con los datos actuales de los sensores -->
+        <div class="data-grid">
+            <!-- Métrica: Temperatura -->
+            <div class="metric">
+                <h2>Temperatura</h2>
+                <p id="temp-actual">-- °C</p>
+            </div>
+            <!-- Métrica: Humedad -->
+            <div class="metric">
+                <h2>Humedad</h2>
+                <p id="hum-actual">-- %</p>
+            </div>
+            <!-- Métrica: Calidad del aire -->
+            <div class="metric">
+                <h2>Calidad Aire</h2>
+                <p id="aire-actual">--</p>
+                <span id="aire-label" class="label"></span>
+            </div>
+            <!-- Métrica: Luz -->
+            <div class="metric">
+                <h2>Luz</h2>
+                <p id="luz-actual">--</p>
+                <span id="luz-label" class="label"></span>
+            </div>
+            <!-- Predicción de temperatura usando IA -->
+            <div class="prediction">
+                <h2>Predicción de Temp. (1 hr)</h2>
+                <p id="prediccion-temp">-- °C</p>
+            </div>
+        </div>
+        <!-- Timestamp de la última lectura -->
+        <p id="timestamp" style="font-size: 0.8em; color: #777; margin-top: 20px;">Última lectura: --</p>
+    </div>
+
+    <!-- Librerías externas necesarias -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.11.0/dist/tf.min.js"></script>
+
+    <!-- Script principal de la aplicación -->
+    <script src="script.js"></script>
+    <script>
+        // Cambia entre modo día y noche
+        const toggle = document.getElementById('mode-toggle');
+        function setMode(night) {
+            document.body.className = night ? 'night' : 'day';
+            document.querySelector('.station').className = 'station ' + (night ? 'night' : 'day');
+            document.querySelectorAll('.metric').forEach(el => el.className = 'metric ' + (night ? 'night' : 'day'));
+            document.querySelector('.prediction').className = 'prediction ' + (night ? 'night' : 'day');
+            document.getElementById('status').className = (night ? 'night' : 'day');
+            document.getElementById('timestamp').className = (night ? 'night' : 'day');
+        }
+        toggle.addEventListener('change', e => setMode(toggle.checked));
+        // Inicializa en modo día 
+        setMode(false);
+    </script>
+</body>
+</html>
