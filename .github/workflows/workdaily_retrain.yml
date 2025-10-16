@@ -18,7 +18,10 @@ jobs:
       - name: Instalar dependencias
         run: pip install tensorflow firebase-admin numpy
       - name: Crear clave de servicio desde el secreto
-        run: echo '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}' > serviceAccountKey.json
+        run: |
+          cat <<EOF > serviceAccountKey.json
+          ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          EOF
       - name: Ejecutar script de re-entrenamiento
         run: python retrain.py
       - name: Subir los nuevos pesos al repositorio
