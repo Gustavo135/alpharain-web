@@ -17,11 +17,12 @@ jobs:
           python-version: '3.10'
       - name: Instalar dependencias
         run: pip install tensorflow firebase-admin numpy
-      - name: Crear clave de servicio desde el secreto
-        run: |
-          cat <<EOF > serviceAccountKey.json
-          ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-          EOF
+      - name: Instalar dependencias
+        run: pip install tensorflow firebase-admin numpy
+
+      - name: Decodificar y crear clave de servicio desde el secreto
+        run: echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}" | base64 -d > serviceAccountKey.json
+
       - name: Ejecutar script de re-entrenamiento
         run: python retrain.py
       - name: Subir los nuevos pesos al repositorio
